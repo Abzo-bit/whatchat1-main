@@ -13,6 +13,7 @@ export function initializeGroupModal(createGroup, fetchGroups, displayGroups) {
     });
 
     cancelButton?.addEventListener('click', () => {
+        e.stoppropagation();
         modal.classList.add('hidden');
         form.reset();
     });
@@ -20,6 +21,7 @@ export function initializeGroupModal(createGroup, fetchGroups, displayGroups) {
     photoButton?.addEventListener('click', () => photoInput.click());
     
     form?.addEventListener('submit', async (e) => {
+        e.stoppropagation();
         e.preventDefault();
         await handleGroupSubmit(e, modal, form, createGroup, fetchGroups, displayGroups);
     });

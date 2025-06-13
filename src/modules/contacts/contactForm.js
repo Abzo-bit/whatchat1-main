@@ -11,6 +11,7 @@ export function handleNewContact() {
   }
 
   newContactButton.addEventListener('click', () => {
+    e.stopPropagation();
     const modal = createContactModal();
     document.body.appendChild(modal);
     initializeContactForm(modal);
@@ -25,11 +26,14 @@ function initializeContactForm(modal) {
   
   // Validation en temps réel
   nameInput.addEventListener('input', (e) => {
+    e.stopPropagation();
     const isValid = validateName(e.target.value);
     toggleError(nameInput, isValid, 'Le nom doit contenir au moins 2 caractères');
   });
 
   phoneInput.addEventListener('input', (e) => {
+    e.stopPropagation();
+    e.preventDefault()   
     const isValid = validatePhone(e.target.value);
     toggleError(phoneInput, isValid, 'Format invalide (ex: +221 7X XXX XX XX)');
     if (isValid) {
@@ -42,6 +46,7 @@ function initializeContactForm(modal) {
 
   // Gestion de la soumission
   form.addEventListener('submit', async (e) => {
+    e.stopPropagation();
     e.preventDefault();
     
     try {
@@ -59,7 +64,7 @@ function initializeContactForm(modal) {
         throw new Error('Numéro de téléphone invalide');
       }
 
-      const response = await fetch('http://localhost:3001/contacts', {
+      const response = await fetch('https://json-server-xp3c.onrender.com/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,6 +158,3 @@ function createContactModal() {
   `;
   return modal;
 }
-
-// Le reste des fonctions reste similaire à celles du groupe,
-// avec les validations appropriées pour les contacts

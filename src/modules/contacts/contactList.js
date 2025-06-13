@@ -1,6 +1,6 @@
 export async function displayContacts() {
   try {
-    const response = await fetch('http://localhost:3001/contacts');
+    const response = await fetch('https://json-server-xp3c.onrender.com/contacts');
     const contacts = await response.json();
     
     if (!Array.isArray(contacts)) {

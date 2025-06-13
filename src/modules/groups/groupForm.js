@@ -22,6 +22,7 @@ export function handleNewGroup() {
   }
 
   newGroupButton.addEventListener('click', () => {
+        e.stoppropagation();
     const modal = createGroupModal();
     document.body.appendChild(modal);
     
@@ -54,7 +55,7 @@ function validateForm(groupName, selectedParticipants) {
     errors.name = "Le nom du groupe est requis";
   } else if (groupName.length < 3) {
     errors.name = "Le nom doit contenir au moins 3 caractères";
-  } else if (groupName.length > 50) {
+  } else if (groupName.length > 20) {
     errors.name = "Le nom ne doit pas dépasser 50 caractères";
   }
 
@@ -82,6 +83,7 @@ async function initializeGroupForm(modal) {
 
   // Validation en temps réel du nom
   groupNameInput.addEventListener('input', (e) => {
+    e.stoppropagation();
     const value = e.target.value.trim();
     const errorElement = form.querySelector('.error-message');
     let isValid = true;
@@ -92,7 +94,7 @@ async function initializeGroupForm(modal) {
     } else if (value.length < 3) {
       showFieldError(errorElement, "Le nom doit contenir au moins 3 caractères");
       isValid = false;
-    } else if (value.length > 50) {
+    } else if (value.length > 20) {
       showFieldError(errorElement, "Le nom ne doit pas dépasser 50 caractères");
       isValid = false;
     } else {
@@ -104,7 +106,7 @@ async function initializeGroupForm(modal) {
 
   // Chargement et gestion des participants
   try {
-    const response = await fetch('http://localhost:3001/contacts');
+    const response = await fetch('https://json-server-xp3c.onrender.com/contacts');
     const contacts = await response.json();
     
     const participantsList = modal.querySelector('#participantsList');
@@ -179,7 +181,7 @@ async function initializeGroupForm(modal) {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/groups', {
+      const response = await fetch('https://json-server-xp3c.onrender.com/groups', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

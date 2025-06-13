@@ -13,18 +13,22 @@ export function initializeContactModal(fetchContacts, displayContacts, createCon
     // Initialiser les écouteurs d'événements
     if (addContactButton) {
         addContactButton.addEventListener('click', () => showModal(modal));
+        e.stopPropagation();
     }
 
     if (cancelButton) {
         cancelButton.addEventListener('click', () => closeModal(modal, form));
+        e.stopPropagation();
     }
 
     if (photoButton) {
         photoButton.addEventListener('click', () => photoInput.click());
+        e.stopPropagation();
     }
 
     if (photoInput) {
         photoInput.addEventListener('change', handlePhotoChange);
+        e.stopPropagation();
     }
 
     if (form) {
@@ -35,6 +39,7 @@ export function initializeContactModal(fetchContacts, displayContacts, createCon
 
     // Fermer le modal en cliquant en dehors
     modal?.addEventListener('click', (e) => {
+    e.stopPropagation();
         if (e.target === modal) {
             closeModal(modal, form);
         }

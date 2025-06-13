@@ -1,6 +1,6 @@
 export async function displayGroups() {
   try {
-    const response = await fetch('http://localhost:3001/groups');
+    const response = await fetch('https://json-server-xp3c.onrender.com/groups');
     const groups = await response.json();
     
     const conversationsList = document.querySelector('#conversationsList');
@@ -42,7 +42,7 @@ export async function displayGroups() {
 async function selectGroup(groupId) {
   console.log('Groupe sélectionné:', groupId);
   try {
-    const response = await fetch(`http://localhost:3001/groups/${groupId}`);
+    const response = await fetch(`https://json-server-xp3c.onrender.com/groups/${groupId}`);
     if (!response.ok) {
       throw new Error('Erreur lors de la récupération du groupe');
     }

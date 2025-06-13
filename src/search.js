@@ -4,12 +4,14 @@ export function initializeSearch(contacts) {
     
     // Attendre que le DOM soit complètement chargé
     document.addEventListener('DOMContentLoaded', () => {
+        e.stoppropagation();
         if (!searchInput || !contactsList) {
             console.warn('Éléments de recherche non trouvés dans le DOM');
             return;
         }
 
         searchInput.addEventListener('input', (e) => {
+        e.stoppropagation();
             const searchTerm = e.target.value.toLowerCase();
             const filteredContacts = contacts.filter(contact => 
                 contact.name.toLowerCase().includes(searchTerm)
