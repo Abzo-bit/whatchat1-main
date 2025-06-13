@@ -11,6 +11,7 @@ export function handleNewContact() {
   }
 
   newContactButton.addEventListener('click', () => {
+    e.stopPropagation();
     const modal = createContactModal();
     document.body.appendChild(modal);
     initializeContactForm(modal);
@@ -25,6 +26,7 @@ function initializeContactForm(modal) {
   
   // Validation en temps réel
   nameInput.addEventListener('input', (e) => {
+    e.stopPropagation();
     const isValid = validateName(e.target.value);
     toggleError(nameInput, isValid, 'Le nom doit contenir au moins 2 caractères');
   });

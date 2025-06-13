@@ -39,6 +39,7 @@ export function initializeContactModal(fetchContacts, displayContacts, createCon
 
     // Fermer le modal en cliquant en dehors
     modal?.addEventListener('click', (e) => {
+    e.stopPropagation();
         if (e.target === modal) {
             closeModal(modal, form);
         }
