@@ -1,0 +1,6 @@
+{
+  "/api/*": "/$1",
+  "/contacts": "/contacts",
+  "/messages": "/messages",
+  "/auth": "/auth"
+}

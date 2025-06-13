@@ -1,0 +1,269 @@
+{
+  "contacts": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "avatar": null,
+      "status": "Hey, j'utilise WhatsChat!"
+    },
+    {
+      "name": "Abzo Dieng",
+      "phone": "785474553",
+      "avatar": "A",
+      "id": 2
+    },
+    {
+      "name": "Abzo Dieng",
+      "phone": "786543212",
+      "avatar": "A",
+      "status": "Salut ! J'utilise WhatsChat.",
+      "id": 3
+    },
+    {
+      "name": "abou",
+      "phone": "786548909",
+      "avatar": "A",
+      "status": "Salut ! J'utilise WhatsChat.",
+      "id": 4
+    },
+    {
+      "name": "d",
+      "phone": "12",
+      "avatar": "D",
+      "status": "Salut ! J'utilise WhatsChat.",
+      "id": 5
+    },
+    {
+      "name": "Aboubakry dieng",
+      "phone": "+221 77 000 90 00",
+      "avatar": "A",
+      "status": "Salut ! J'utilise WhatsChat.",
+      "id": 6
+    }
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "name": "Groupe Test",
+      "participants": [
+        "1",
+        "2"
+      ],
+      "avatar": null,
+      "createdAt": "2023-06-12T10:00:00.000Z",
+      "lastMessage": "Bonjour tout le monde",
+      "timestamp": "12:00"
+    },
+    {
+      "name": "Breukhh",
+      "participants": [
+        "2",
+        "1"
+      ],
+      "avatar": null,
+      "createdAt": "2025-06-12T03:35:54.498Z",
+      "id": 2
+    },
+    {
+      "name": "PROMO 7",
+      "participants": [
+        "1",
+        "2",
+        "3"
+      ],
+      "createdAt": "2025-06-12T12:51:21.750Z",
+      "avatar": "P",
+      "id": 3
+    },
+    {
+      "name": "&é",
+      "participants": [
+        "3",
+        "6"
+      ],
+      "createdAt": "2025-06-12T13:00:38.588Z",
+      "avatar": "&",
+      "id": 4
+    },
+    {
+      "name": "breukh",
+      "participants": [
+        "4",
+        "6"
+      ],
+      "createdAt": "2025-06-12T13:23:25.635Z",
+      "avatar": "B",
+      "lastMessage": "",
+      "timestamp": "13:23:25",
+      "id": 5
+    },
+    {
+      "name": "PROMO 7",
+      "participants": [
+        "1",
+        "2"
+      ],
+      "createdAt": "2025-06-12T13:37:15.597Z",
+      "avatar": "P",
+      "lastMessage": "",
+      "timestamp": "13:37:15",
+      "id": 6
+    },
+    {
+      "name": "PROMO 8",
+      "participants": [
+        "1",
+        "2"
+      ],
+      "createdAt": "2025-06-12T14:21:21.092Z",
+      "avatar": "P",
+      "lastMessage": "",
+      "timestamp": "14:21:21",
+      "id": 7
+    },
+    {
+      "name": "ODC",
+      "participants": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "createdAt": "2025-06-13T00:36:15.957Z",
+      "avatar": "O",
+      "lastMessage": "",
+      "timestamp": "00:36:15",
+      "id": 8
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "conversationId": "contact_1",
+      "sender": "me",
+      "content": "Salut !",
+      "timestamp": "10:30"
+    },
+    {
+      "content": "c bon",
+      "sender": "me",
+      "timestamp": "20:54:16",
+      "conversationId": "default",
+      "id": 2
+    },
+    {
+      "content": "c bon",
+      "sender": "me",
+      "timestamp": "20:54:16",
+      "conversationId": "default",
+      "id": 2
+    },
+    {
+      "content": "c bon",
+      "sender": "me",
+      "timestamp": "21:03:01",
+      "conversationId": "group_7",
+      "id": 3
+    },
+    {
+      "content": "bonjour",
+      "sender": "me",
+      "timestamp": "21:03:10",
+      "conversationId": "group_6",
+      "id": 4
+    },
+    {
+      "content": "boy nkl",
+      "sender": "me",
+      "timestamp": "21:03:24",
+      "conversationId": "contact_undefined",
+      "id": 5
+    },
+    {
+      "content": "b",
+      "sender": "me",
+      "timestamp": "21:08:43",
+      "conversationId": "group_1",
+      "id": 6
+    },
+    {
+      "content": "yh la mifa",
+      "sender": "me",
+      "timestamp": "08:29:13",
+      "conversationId": "group_8",
+      "id": 7
+    },
+    {
+      "content": "cool",
+      "sender": "me",
+      "timestamp": "09:24:05",
+      "conversationId": "group_5",
+      "id": 8
+    },
+    {
+      "content": "nnn",
+      "sender": "me",
+      "timestamp": "09:37:57",
+      "conversationId": "group_1",
+      "id": 9
+    },
+    {
+      "content": "breukhh",
+      "sender": "me",
+      "timestamp": "09:38:32",
+      "conversationId": "group_2",
+      "id": 10
+    },
+    {
+      "content": "bonjour",
+      "sender": "me",
+      "timestamp": "12:28:02",
+      "conversationId": "contact_1749817674357",
+      "id": 11
+    },
+    {
+      "content": "nnn",
+      "sender": "me",
+      "timestamp": "12:28:18",
+      "conversationId": "contact_1749817688337",
+      "id": 12
+    },
+    {
+      "content": "mrc",
+      "sender": "me",
+      "timestamp": "12:32:28",
+      "conversationId": "contact_1749817940421_O",
+      "id": 13
+    },
+    {
+      "content": "y'a quoi",
+      "sender": "me",
+      "timestamp": "12:32:42",
+      "conversationId": "contact_1749817952600_J",
+      "id": 14
+    },
+    {
+      "content": "fgh",
+      "sender": "me",
+      "timestamp": "14:13:35",
+      "conversationId": "contact_1749824008868_&",
+      "id": 15
+    },
+    {
+      "content": "nnn",
+      "sender": "me",
+      "timestamp": "14:13:50",
+      "conversationId": "contact_1749824022846_J",
+      "id": 16
+    }
+  ],
+  "owner": {
+    "id": "owner",
+    "name": "Abzo Dieng",
+    "phone": "+221 78 547 45 53",
+    "avatar": "A",
+    "status": "Disponible"
+  }
+}
