@@ -12,23 +12,31 @@ export function initializeContactModal(fetchContacts, displayContacts, createCon
 
     // Initialiser les écouteurs d'événements
     if (addContactButton) {
-        addContactButton.addEventListener('click', () => showModal(modal));
-        e.stopPropagation();
+        addContactButton.addEventListener('click', (e) => {
+            showModal(modal);
+            e.stopPropagation();
+        });
     }
 
     if (cancelButton) {
-        cancelButton.addEventListener('click', () => closeModal(modal, form));
-        e.stopPropagation();
+        cancelButton.addEventListener('click', (e) => {
+            closeModal(modal, form);
+            e.stopPropagation();
+        });
     }
 
     if (photoButton) {
-        photoButton.addEventListener('click', () => photoInput.click());
-        e.stopPropagation();
+        photoButton.addEventListener('click', (e) => {
+            photoInput.click();
+            e.stopPropagation();
+        });
     }
 
     if (photoInput) {
-        photoInput.addEventListener('change', handlePhotoChange);
-        e.stopPropagation();
+        photoInput.addEventListener('change', (e) => {
+            handlePhotoChange(e);
+            e.stopPropagation();
+        });
     }
 
     if (form) {
