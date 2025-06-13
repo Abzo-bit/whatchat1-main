@@ -33,7 +33,7 @@ function checkAuth() {
 function initializeLogout() {
     const logoutBtn = document.querySelector('#logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', (e) => {
     e.stopPropagation();
             localStorage.removeItem('auth_token');
             window.location.href = '/login.html';
@@ -76,7 +76,7 @@ function initializeNewChatPanel() {
   }
 
   // Afficher le panel de nouvelle discussion
-  newChatButton.addEventListener('click', () => {
+  newChatButton.addEventListener('click', (e) => {
     e.stopPropagation();
     conversationsPanel.style.display = 'none';
     newChatPanel.style.display = 'flex';
@@ -84,7 +84,7 @@ function initializeNewChatPanel() {
   });
 
   // Retour au panel des conversations
-  backButton.addEventListener('click', () => {
+  backButton.addEventListener('click', (e) => {
     e.stopPropagation();
     newChatPanel.style.display = 'none';
     conversationsPanel.style.display = 'flex';
@@ -201,7 +201,7 @@ function initializeContactFunctions() {
     return;
   }
 
-  newContactButton.addEventListener('click', () => {
+  newContactButton.addEventListener('click', (e) => {
     e.stopPropagation();
     console.log('Clic sur nouveau contact');
     showContactModal();
@@ -209,7 +209,7 @@ function initializeContactFunctions() {
 }
 
 // Assurez-vous que la fonction est appelée au chargement de la page
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', (e) => {
     e.stopPropagation();
   initializeContactFunctions();
 });
@@ -322,4 +322,3 @@ function initializeContactModalHandlers(modal) {
 
 // S'assurer que l'app est initialisée au chargement
 document.addEventListener('DOMContentLoaded', initializeApp);
-e.stopPropagation();

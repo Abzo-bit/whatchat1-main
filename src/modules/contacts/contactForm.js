@@ -10,7 +10,7 @@ export function handleNewContact() {
     return;
   }
 
-  newContactButton.addEventListener('click', () => {
+  newContactButton.addEventListener('click', (e) => {
     e.stopPropagation();
     const modal = createContactModal();
     document.body.appendChild(modal);

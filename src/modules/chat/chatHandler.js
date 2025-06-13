@@ -7,12 +7,10 @@ export function initializeChatSelection() {
   
   if (contactsList) {
     contactsList.addEventListener('click', handleConversationSelect);
-    e.stoppropagation();
   }
   
   if (conversationsList) {
     conversationsList.addEventListener('click', handleConversationSelect);
-    e.stoppropagation();
   }
 }
 
