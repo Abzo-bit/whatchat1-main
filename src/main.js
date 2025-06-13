@@ -34,6 +34,7 @@ function initializeLogout() {
     const logoutBtn = document.querySelector('#logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
+    e.stopPropagation();
             localStorage.removeItem('auth_token');
             window.location.href = '/login.html';
         });
@@ -56,6 +57,7 @@ function initializeNewChatMenu() {
   });
 
   document.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (!newChatMenu.contains(e.target) && !newChatButton.contains(e.target)) {
       newChatMenu.classList.add('hidden');
     }
@@ -75,6 +77,7 @@ function initializeNewChatPanel() {
 
   // Afficher le panel de nouvelle discussion
   newChatButton.addEventListener('click', () => {
+    e.stopPropagation();
     conversationsPanel.style.display = 'none';
     newChatPanel.style.display = 'flex';
     loadContacts(); // Cette ligne appelle la fonction loadContacts
@@ -82,6 +85,7 @@ function initializeNewChatPanel() {
 
   // Retour au panel des conversations
   backButton.addEventListener('click', () => {
+    e.stopPropagation();
     newChatPanel.style.display = 'none';
     conversationsPanel.style.display = 'flex';
   });
@@ -92,7 +96,7 @@ async function initializeApp() {
     if (!checkAuth()) return;
 
     // Charger les informations du propriétaire
-    const ownerResponse = await fetch('http://localhost:3001/owner');
+    const ownerResponse = await fetch('https://json-server-xp3c.onrender.com/owner');
     const owner = await ownerResponse.json();
 
     // Mettre à jour l'avatar dans la sidebar
@@ -131,8 +135,8 @@ async function initializeApp() {
 async function loadContacts() {
   try {
     const [contactsResponse, ownerResponse] = await Promise.all([
-      fetch('http://localhost:3001/contacts'),
-      fetch('http://localhost:3001/owner')
+      fetch('https://json-server-xp3c.onrender.com/contacts'),
+      fetch('https://json-server-xp3c.onrender.com/owner')
     ]);
 
     const contacts = await contactsResponse.json();
@@ -198,6 +202,7 @@ function initializeContactFunctions() {
   }
 
   newContactButton.addEventListener('click', () => {
+    e.stopPropagation();
     console.log('Clic sur nouveau contact');
     showContactModal();
   });
@@ -205,6 +210,7 @@ function initializeContactFunctions() {
 
 // Assurez-vous que la fonction est appelée au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
+    e.stopPropagation();
   initializeContactFunctions();
 });
 
@@ -280,6 +286,7 @@ function initializeContactModalHandlers(modal) {
   });
 
   form.addEventListener('submit', async (e) => {
+    e.stopPropagation();
     e.preventDefault();
     
     const formData = new FormData(form);
@@ -291,7 +298,7 @@ function initializeContactModalHandlers(modal) {
     };
 
     try {
-      const response = await fetch('http://localhost:3001/contacts', {
+      const response = await fetch('https://json-server-xp3c.onrender.com/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -315,3 +322,4 @@ function initializeContactModalHandlers(modal) {
 
 // S'assurer que l'app est initialisée au chargement
 document.addEventListener('DOMContentLoaded', initializeApp);
+e.stopPropagation();

@@ -33,12 +33,14 @@ export function initializeMessageInput() {
   }
 
   messageInput.addEventListener('input', function() {
+        e.stoppropagation();
     const hasText = this.value.trim().length > 0;
     microIcon.classList.toggle('hidden', hasText);
     sendIcon.classList.toggle('hidden', !hasText);
   });
 
   sendButton.addEventListener('click', async function() {
+        e.stoppropagation();
     const messageText = messageInput.value.trim();
     if (!messageText || !currentConversationId) {
       console.warn('Message vide ou pas de conversation sélectionnée');
@@ -76,7 +78,7 @@ async function loadConversationMessages(conversationId) {
   if (!conversationId) return;
 
   try {
-    const response = await fetch(`http://localhost:3001/messages?conversationId=${conversationId}`);
+    const response = await fetch(`https://json-server-xp3c.onrender.com/messages?conversationId=${conversationId}`);
     if (!response.ok) throw new Error('Erreur lors du chargement des messages');
 
     const messages = await response.json();
@@ -110,7 +112,7 @@ async function loadConversationMessages(conversationId) {
 
 async function saveMessage(message) {
   try {
-    const response = await fetch('http://localhost:3001/messages', {
+    const response = await fetch('https://json-server-xp3c.onrender.com/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

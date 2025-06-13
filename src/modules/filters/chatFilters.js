@@ -4,6 +4,7 @@ export function initializeFilters() {
 
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
+          e.stoppropagation();
       // Retirer la classe active de tous les boutons
       filterButtons.forEach(btn => {
         btn.classList.remove('text-[#00a884]', 'border-[#00a884]');

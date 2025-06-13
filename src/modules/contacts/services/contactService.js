@@ -1,25 +1,11 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from '../../../config.js';
 
 export async function fetchContacts() {
-    const authToken = localStorage.getItem('auth_token');
-    if (!authToken) {
-        throw new Error('Token d\'authentification manquant');
-    }
-
     try {
-        const response = await fetch(`${API_URL}/contacts`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        
+        const response = await fetch(`${API_URL}/contacts`);
         if (!response.ok) {
             throw new Error(`Erreur HTTP: ${response.status}`);
         }
-        
         return await response.json();
     } catch (error) {
         console.error('Erreur lors du chargement des contacts:', error);
@@ -28,17 +14,11 @@ export async function fetchContacts() {
 }
 
 export async function createContact(contactData) {
-    const authToken = localStorage.getItem('auth_token');
-    if (!authToken) {
-        throw new Error('Token d\'authentification manquant');
-    }
-
     try {
         const response = await fetch(`${API_URL}/contacts`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(contactData)
         });

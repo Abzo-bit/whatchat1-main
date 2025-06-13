@@ -7,10 +7,12 @@ export function initializeChatSelection() {
   
   if (contactsList) {
     contactsList.addEventListener('click', handleConversationSelect);
+    e.stoppropagation();
   }
   
   if (conversationsList) {
     conversationsList.addEventListener('click', handleConversationSelect);
+    e.stoppropagation();
   }
 }
 
@@ -100,7 +102,7 @@ async function loadMessages(contactName) {
   if (!chatMessages) return;
 
   try {
-    const response = await fetch(`http://localhost:3001/messages?contact=${contactName}`);
+    const response = await fetch(`https://json-server-xp3c.onrender.com/messages?contact=${contactName}`);
     const messages = await response.json();
 
     chatMessages.innerHTML = `
