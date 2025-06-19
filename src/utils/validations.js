@@ -1,15 +1,5 @@
 import { ValidationError } from './errors.js';
 
-export const phoneRegex = /^(\+221|221)?[76|77|78|70|75]\d{8}$/;
-
-/**
- * Valide un numéro de téléphone sénégalais
- * Format: +221 7X XXX XX XX
- */
-export function validatePhone(phone) {
-  return phoneRegex.test(phone.replace(/\s/g, ''));
-}
-
 /**
  * Valide un nom de contact
  * Minimum 2 caractères
@@ -22,14 +12,36 @@ export function validateName(name) {
  * Formate un numéro de téléphone au format sénégalais
  */
 export function formatPhone(phone) {
-  const cleaned = phone.replace(/\D/g, '');
-  if (!validatePhone(cleaned)) return phone;
+  if (!phone) return '';
   
-  const matches = cleaned.match(/^(?:221)?(\d{2})(\d{3})(\d{2})(\d{2})$/);
-  if (matches) {
-    return `+221 ${matches[1]} ${matches[2]} ${matches[3]} ${matches[4]}`;
+  // Nettoyer le numéro
+  const cleaned = phone.replace(/[^\d+]/g, '');
+  
+  // Si le numéro commence déjà par +221
+  if (cleaned.startsWith('+221')) {
+    return cleaned;
   }
+  
+  // Si le numéro commence par 221
+  if (cleaned.startsWith('221')) {
+    return '+' + cleaned;
+  }
+  
+  // Si c'est juste un numéro à 9 chiffres
+  if (/^[7][0-8]\d{7}$/.test(cleaned)) {
+    return '+221' + cleaned;
+  }
+  
   return phone;
+}
+
+/**
+ * Valide un numéro de téléphone sénégalais
+ */
+export function validatePhone(phone) {
+  if (!phone) return false;
+  const cleaned = phone.replace(/[^\d+]/g, '');
+  return /^(\+?221)?[7][0-8]\d{7}$/.test(cleaned);
 }
 
 /**
@@ -46,10 +58,8 @@ export function validateContactData(formData) {
   }
   
   // Validation du téléphone
-  if (!formData.phone || !formData.phone.trim()) {
-    errors.phone = "Le numéro de téléphone est requis";
-  } else if (!validatePhone(formData.phone)) {
-    errors.phone = "Format de numéro invalide (ex: +221 7X XXX XX XX)";
+  if (!formData.phone || !validatePhone(formData.phone)) {
+    errors.phone = "Le numéro de téléphone est invalide";
   }
   
   // Si des erreurs sont trouvées, on les lance
@@ -58,22 +68,4 @@ export function validateContactData(formData) {
   }
 
   return true;
-}
-
-/**
- * Formate uniformément un numéro de téléphone
- */
-export function formatPhoneNumber(phone) {
-  const cleaned = phone.replace(/\D/g, '');
-  const withCountryCode = cleaned.startsWith('221') 
-    ? cleaned 
-    : cleaned.startsWith('7') 
-      ? '221' + cleaned 
-      : cleaned;
-
-  const match = withCountryCode.match(/^221(\d{2})(\d{3})(\d{2})(\d{2})$/);
-  if (match) {
-    return `+${match[1]} ${match[2]} ${match[3]} ${match[4]}`;
-  }
-  return phone;
 }

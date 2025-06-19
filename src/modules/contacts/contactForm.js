@@ -1,160 +1,201 @@
+import { generateContactId } from '../../utils/idGenerator.js';
 import { validatePhone, validateName, formatPhone } from '../../utils/validations.js';
 import { showError } from '../../utils/error-handling.js';
 
 export function handleNewContact() {
-  // Utiliser le bon sélecteur qui correspond à l'ID dans le HTML
-  const newContactButton = document.querySelector('#newContactButton');
-  
-  if (!newContactButton) {
-    console.warn('Bouton nouveau contact non trouvé');
-    return;
-  }
+    const newContactButton = document.querySelector('#newContactButton');
+    
+    if (newContactButton) {
+        newContactButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modal = createContactModal();
+            document.body.appendChild(modal);
+            
+            // Gestionnaire de fermeture pour le bouton X
+            const closeButton = modal.querySelector('#closeModal');
+            closeButton?.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.remove();
+            });
 
-  newContactButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const modal = createContactModal();
-    document.body.appendChild(modal);
-    initializeContactForm(modal);
-  });
+            // Gestionnaire de fermeture en cliquant en dehors du modal
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    const form = modal.querySelector('#newContactForm');
+                    if (form) {
+                        form.reset();
+                    }
+                    modal.remove();
+                }
+            });
+
+            // Empêcher la propagation des clics depuis le contenu du modal
+            const modalContent = modal.querySelector('[class*="bg-[#202c33]"]'); // Modification ici
+            if (modalContent) {
+                modalContent.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+
+            initializeContactForm(modal);
+        });
+    }
 }
 
 function initializeContactForm(modal) {
-  const form = modal.querySelector('form');
-  const nameInput = form.querySelector('#contactName');
-  const phoneInput = form.querySelector('#contactPhone');
-  const closeBtn = modal.querySelector('#closeModal');
-  
-  // Validation en temps réel
-  nameInput.addEventListener('input', (e) => {
-    e.stopPropagation();
-    const isValid = validateName(e.target.value);
-    toggleError(nameInput, isValid, 'Le nom doit contenir au moins 2 caractères');
-  });
-
-  phoneInput.addEventListener('input', (e) => {
-    e.stopPropagation();
-    e.preventDefault()   
-    const isValid = validatePhone(e.target.value);
-    toggleError(phoneInput, isValid, 'Format invalide (ex: +221 7X XXX XX XX)');
-    if (isValid) {
-      e.target.value = formatPhone(e.target.value);
-    }
-  });
-
-  // Gestion de la fermeture
-  closeBtn.addEventListener('click', () => modal.remove());
-
-  // Gestion de la soumission
-  form.addEventListener('submit', async (e) => {
-    e.stopPropagation();
-    e.preventDefault();
+    const form = modal.querySelector('#newContactForm');
+    const nameInput = form.querySelector('#contactName');
+    const phoneInput = form.querySelector('#contactPhone');
     
-    try {
-      const formData = {
-        name: nameInput.value.trim(),
-        phone: phoneInput.value.trim(),
-        avatar: nameInput.value.trim().charAt(0).toUpperCase(),
-        status: "Salut ! J'utilise WhatsChat."
-      };
+    phoneInput.addEventListener('input', (e) => {
+        e.preventDefault();
+        const isValid = validatePhone(e.target.value);
+        toggleError(phoneInput, isValid, 'Format invalide (ex: +221 7X XXX XX XX)');
+    });
 
-      if (!validateName(formData.name)) {
-        throw new Error('Nom invalide');
-      }
-      if (!validatePhone(formData.phone)) {
-        throw new Error('Numéro de téléphone invalide');
-      }
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        try {
+            const formData = {
+                id: generateContactId(), // Utiliser generateContactId au lieu de generateUniqueId
+                name: nameInput.value.trim(),
+                phone: phoneInput.value.trim(),
+                avatar: nameInput.value.trim().charAt(0).toUpperCase(),
+                status: "Salut ! J'utilise WhatsChat."
+            };
 
-      const response = await fetch('https://json-server-xp3c.onrender.com/contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
+            if (!validateName(formData.name)) {
+                throw new Error('Nom invalide');
+            }
+            if (!validatePhone(formData.phone)) {
+                throw new Error('Numéro de téléphone invalide');
+            }
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la création du contact');
-      }
+            const response = await fetch('https://json-server-xp3c.onrender.com/contacts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
 
-      modal.remove();
-      window.location.reload(); // Recharger pour voir le nouveau contact
-    } catch (error) {
-      showError(error.message);
-    }
-  });
+            if (!response.ok) {
+                throw new Error('Erreur lors de la création du contact');
+            }
+
+            modal.remove();
+            window.location.reload();
+        } catch (error) {
+            showError(error.message);
+        }
+    });
 }
 
 function toggleError(input, isValid, message) {
-  const errorDiv = input.parentElement.querySelector('.error-message');
-  if (!isValid) {
-    if (!errorDiv) {
-      const error = document.createElement('p');
-      error.className = 'error-message text-red-500 text-sm mt-1';
-      error.textContent = message;
-      input.parentElement.appendChild(error);
+    const errorDiv = input.parentElement.querySelector('.error-message');
+    if (!isValid) {
+        if (!errorDiv) {
+            const error = document.createElement('p');
+            error.className = 'error-message text-red-500 text-sm mt-1';
+            error.textContent = message;
+            input.parentElement.appendChild(error);
+        }
+    } else if (errorDiv) {
+        errorDiv.remove();
     }
-  } else if (errorDiv) {
-    errorDiv.remove();
-  }
 }
 
 function createContactModal() {
-  const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-  modal.innerHTML = `
-    <div class="bg-[#202c33] rounded-lg p-6 w-[480px]">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-white text-xl">Nouveau contact</h2>
-        <button class="text-[#aebac1] hover:text-white" id="closeModal">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
-      </div>
-
-      <form id="newContactForm" class="space-y-6" novalidate>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-[#aebac1] text-sm mb-2" for="contactName">
-              Nom <span class="text-red-500">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="contactName" 
-              name="name"
-              minlength="2"
-              maxlength="50"
-              class="w-full bg-[#2a3942] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a884]"
-              placeholder="Entrez le nom du contact"
-            >
-            <p class="name-error hidden text-red-500 text-sm mt-1"></p>
-          </div>
-
-          <div>
-            <label class="block text-[#aebac1] text-sm mb-2" for="contactPhone">
-              Numéro de téléphone <span class="text-red-500">*</span>
-            </label>
-            <input 
-              type="tel" 
-              id="contactPhone" 
-              name="phone"
-              pattern="^(\+221|221)?[76|77|78|70|75]\d{8}$"
-              class="w-full bg-[#2a3942] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a884]"
-              placeholder="+221 7X XXX XX XX"
-            >
-            <p class="phone-error hidden text-red-500 text-sm mt-1"></p>
-          </div>
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fadeIn';
+    modal.innerHTML = `
+      <div class="bg-[#202c33] w-[480px] rounded-lg overflow-hidden shadow-xl transform transition-all">
+        <!-- Header -->
+        <div class="bg-[#008069] px-6 py-4 flex items-center gap-6">
+          <button class="text-white hover:opacity-80" id="closeModal">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M19.8 4.8l-1.6-1.6L12 9.5 5.8 3.2 4.2 4.8l6.2 6.3-6.2 6.3 1.6 1.6L12 12.7l6.2 6.3 1.6-1.6-6.2-6.3"/>
+            </svg>
+          </button>
+          <h2 class="text-white text-xl font-medium">Nouveau contact</h2>
         </div>
 
-        <button 
-          type="submit"
-          class="w-full bg-[#00a884] text-white py-2 rounded-lg hover:bg-[#008070] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled
-        >
-          Ajouter le contact
-        </button>
-      </form>
-    </div>
-  `;
-  return modal;
+        <!-- Formulaire -->
+        <form id="newContactForm" class="p-6 space-y-6">
+          <!-- Photo de profil -->
+          <div class="flex justify-center">
+            <div class="relative group">
+              <div class="w-24 h-24 rounded-full bg-[#00a884] flex items-center justify-center cursor-pointer overflow-hidden hover:opacity-90">
+                <span class="text-white text-4xl" id="avatarPreview"><i class="fa-solid fa-user-plus"></i></span>
+              </div>
+              <input type="file" id="avatarInput" class="hidden" accept="image/*">
+            </div>
+          </div>
+
+          <!-- Champs du formulaire -->
+          <div class="space-y-4">
+            <div class="relative">
+              <input 
+                type="text" 
+                id="contactName" 
+                name="name"
+                class="peer w-full bg-transparent text-white px-4 py-3 border-b border-[#8696a026] focus:border-[#00a884] focus:outline-none transition-colors placeholder-transparent"
+                placeholder="Nom"
+              >
+              <label 
+                for="contactName" 
+                class="absolute left-4 -top-2.5 text-sm text-[#8696a0] transition-all
+                       peer-placeholder-shown:text-base peer-placeholder-shown:top-3 
+                       peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-[#00a884]"
+              >
+                Nom <span class="text-red-500">*</span>
+              </label>
+            </div>
+
+            <div class="relative">
+              <input 
+                type="tel" 
+                id="contactPhone" 
+                name="phone
+                class="peer w-full bg-transparent text-white px-4 py-3 border-b border-[#8696a026] focus:border-[#00a884] focus:outline-none transition-colors placeholder-transparent"
+                placeholder="Téléphone"
+              >
+              <label 
+                for="contactPhone" 
+                class="absolute left-4 -top-2.5 text-sm text-[#8696a0] transition-all
+                       peer-placeholder-shown:text-base peer-placeholder-shown:top-3 
+                       peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-[#00a884]"
+              >
+                Numéro de téléphone <span class="text-red-500">*</span>
+              </label>
+              <p class="mt-1 text-xs text-[#8696a0]">Exemple: +221 7X XXX XX XX</p>
+            </div>
+          </div>
+
+          <!-- Messages d'erreur -->
+          <div class="space-y-2">
+            <p class="name-error hidden text-red-500 text-sm"></p>
+            <p class="phone-error hidden text-red-500 text-sm"></p>
+          </div>
+
+          <!-- Bouton de soumission -->
+          <div class="flex justify-end pt-4 border-t border-[#8696a026]">
+            <button 
+              type="submit"
+              class="bg-[#00a884] text-white px-6 py-2 rounded-lg hover:bg-[#008069] transition-colors
+                     disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <span>Ajouter le contact</span>
+              <svg class="w-5 h-5 hidden" id="loadingSpinner" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+    return modal;
 }

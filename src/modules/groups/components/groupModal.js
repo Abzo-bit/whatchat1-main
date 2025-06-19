@@ -1,5 +1,7 @@
+import { generateUniqueId } from '../../../utils/idGenerator.js';
 import { showErrors } from '../../modal/modalHandlers.js';
 import { validateGroup } from '../utils/groupValidator.js';
+import { saveSelectedConversation } from '../../storage/storageManager.js';
 
 export function initializeGroupModal(createGroup, fetchGroups, displayGroups) {
     const modal = document.getElementById('createGroupModal');
@@ -12,7 +14,7 @@ export function initializeGroupModal(createGroup, fetchGroups, displayGroups) {
         modal.classList.remove('hidden');
     });
 
-    cancelButton?.addEventListener('click', () => {
+    cancelButton?.addEventListener('click', (e) => {
         e.stoppropagation();
         modal.classList.add('hidden');
         form.reset();

@@ -3,7 +3,7 @@ export function initializeFilters() {
   const contactsList = document.querySelector('#contactsList');
 
   filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (e) => {
           e.stoppropagation();
       // Retirer la classe active de tous les boutons
       filterButtons.forEach(btn => {

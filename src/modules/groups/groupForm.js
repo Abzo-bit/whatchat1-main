@@ -1,6 +1,10 @@
+import { generateGroupId } from '../../utils/idGenerator.js';
 import { createGroupModal, closeModal } from '../modal/formHandler.js';
 import { showError } from '../../utils/error-handling.js';
-
+import { displayGroups } from './groupList.js';
+import { saveSelectedConversation } from '../storage/storageManager.js';
+import { loadRecentConversations } from '../chat/chatHandler.js';
+import { DEFAULT_AVATAR } from './../../utils/assets.js';
 function validateGroupData(groupName, participants) {
   if (!groupName || groupName.trim().length < 3) {
     throw new Error('Le nom du groupe doit contenir au moins 3 caractères');
@@ -21,8 +25,7 @@ export function handleNewGroup() {
     return;
   }
 
-  newGroupButton.addEventListener('click', () => {
-        e.stoppropagation();
+  newGroupButton.addEventListener('click', (e) => {
     const modal = createGroupModal();
     document.body.appendChild(modal);
     
@@ -83,7 +86,7 @@ async function initializeGroupForm(modal) {
 
   // Validation en temps réel du nom
   groupNameInput.addEventListener('input', (e) => {
-    e.stoppropagation();
+    e.preventDefault();
     const value = e.target.value.trim();
     const errorElement = form.querySelector('.error-message');
     let isValid = true;
@@ -122,7 +125,7 @@ async function initializeGroupForm(modal) {
         <label for="contact-${contact.id}" class="flex items-center gap-3 cursor-pointer">
           <div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center">
             ${contact.avatar ? 
-              `<img src="${contact.avatar}" alt="${contact.name}" class="w-full h-full rounded-full">` :
+              `<img src="${DEFAULT_AVATAR}" alt="${contact.name}" class="w-full h-full rounded-full">` :
               `<span class="text-white">${contact.name.charAt(0).toUpperCase()}</span>`
             }
           </div>
@@ -162,6 +165,7 @@ async function initializeGroupForm(modal) {
   // Gestion de la soumission
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     
     const formData = new FormData(form);
     const groupName = formData.get('name').trim();
@@ -181,37 +185,53 @@ async function initializeGroupForm(modal) {
     }
 
     try {
+      // Vérifier si le groupe existe déjà
+      const existingGroups = await fetch('https://json-server-xp3c.onrender.com/groups').then(r => r.json());
+      const groupExists = existingGroups.some(g => g.name.toLowerCase() === groupName.toLowerCase());
+
+      if (groupExists) {
+        showError('Un groupe avec ce nom existe déjà');
+        return;
+      }
+
+      // Créer le nouveau groupe avec le nouveau format d'ID
+      const newGroup = {
+        id: generateGroupId(),
+        name: groupName,
+        participants: selectedParticipants,
+        createdAt: new Date().toISOString(),
+        avatar: groupName.charAt(0).toUpperCase(),
+        lastMessage: "",
+        timestamp: new Date().toISOString(),
+        type: 'group'
+      };
+
       const response = await fetch('https://json-server-xp3c.onrender.com/groups', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: groupName,
-          participants: selectedParticipants,
-          createdAt: new Date().toISOString(),
-          avatar: groupName.charAt(0).toUpperCase(),
-          lastMessage: "",
-          timestamp: new Date().toLocaleTimeString()
-        })
+        body: JSON.stringify(newGroup)
       });
 
       if (!response.ok) throw new Error('Erreur lors de la création du groupe');
 
-      // Fermer le modal et retourner à la liste des conversations
-      modal.remove();
-      const newChatPanel = document.querySelector('#newChatPanel');
-      const conversationsPanel = document.querySelector('#conversationsPanel');
-      
-      if (newChatPanel && conversationsPanel) {
-        newChatPanel.style.display = 'none';
-        conversationsPanel.style.display = 'flex';
-      }
+      // Sauvegarder le groupe dans les conversations sélectionnées
+      saveSelectedConversation({
+        id: newGroup.id,
+        name: newGroup.name,
+        type: 'group',
+        timestamp: newGroup.timestamp,
+        lastMessage: newGroup.lastMessage,
+        status: `${selectedParticipants.length} participants`
+      });
 
-      // Actualiser la liste des conversations
-      displayGroups();
+      // Fermer le modal et actualiser les conversations
+      modal.remove();
+      await loadRecentConversations();
       showError('Groupe créé avec succès !', 'success');
 
     } catch (error) {
-      showError(error.message);
+      console.error('Erreur:', error);
+      showError('Erreur lors de la création du groupe');
     }
   });
 }

@@ -36,8 +36,9 @@ function showLoadingState(button) {
     `;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    e.stoppropagation();
+document.addEventListener('DOMContentLoaded', (e) => {
+    e.stopPropagation(); // Correction ici : P majuscule
+    
     // Vérifier l'authentification existante
     if (checkExistingAuth()) return;
 
@@ -51,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = loginForm.querySelector('button[type="submit"]');
 
     loginForm.addEventListener('submit', async (e) => {
-        e.stoppropagation();
         e.preventDefault();
         const phone = phoneInput.value;
 
@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    verifyOtpButton.addEventListener('click', async () => {
-        e.stoppropagation();
+    verifyOtpButton.addEventListener('click', async (e) => {
+        e.stopPropagation(); // Correction ici aussi
         const otp = otpInput.value;
         try {
             showLoadingState(verifyOtpButton);

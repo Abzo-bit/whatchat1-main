@@ -3,36 +3,56 @@ export async function displayGroups() {
     const response = await fetch('https://json-server-xp3c.onrender.com/groups');
     const groups = await response.json();
     
-    const conversationsList = document.querySelector('#conversationsList');
-    if (!conversationsList) {
-      console.error('Liste des conversations non trouvée');
+    if (!Array.isArray(groups)) {
+      console.error('Format de données invalide pour les groupes');
       return;
     }
 
-    // Créer le HTML pour chaque groupe
-    groups.forEach(group => {
+    const conversationsList = document.querySelector('#conversationsList');
+    if (!conversationsList) return;
+
+    // Trier les groupes par date de dernier message
+    const sortedGroups = groups.sort((a, b) => 
+      new Date(b.timestamp) - new Date(a.timestamp)
+    );
+
+    sortedGroups.forEach(group => {
+      // Créer les initiales pour les groupes
+      const initials = group.name
+        .split(' ')
+        .map(word => word[0])
+        .slice(0, 3)
+        .join('')
+        .toUpperCase();
+
       const groupHTML = `
-        <div class="group-conversation flex items-center px-4 py-3 hover:bg-[#202c33] cursor-pointer" 
-             data-group-id="${group.id}" 
-             data-name="${group.name}">
+        <div class="flex items-center px-4 py-3 hover:bg-[#202c33] cursor-pointer conversation-item" 
+             data-id="${group.id}" 
+             data-type="group">
           <div class="w-12 h-12 rounded-full bg-[#00a884] flex items-center justify-center mr-4">
-            <span class="text-white text-xl">${group.avatar || group.name.charAt(0).toUpperCase()}</span>
+            <span class="text-white text-sm font-medium">${initials}</span>
           </div>
           <div class="flex-1">
             <div class="flex justify-between items-center">
               <h4 class="text-white text-[15px]">${group.name}</h4>
-              <span class="text-[#8696a0] text-xs">${group.timestamp || 'Aujourd\'hui'}</span>
+              <span class="text-[#8696a0] text-xs">
+                ${new Date(group.timestamp).toLocaleTimeString([], { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </span>
             </div>
-            <p class="text-[#8696a0] text-sm">
-              ${group.lastMessage || `${group.participants?.length || 0} participants`}
-            </p>
+            <div class="flex justify-between">
+              <p class="text-[#8696a0] text-sm truncate">
+                ${group.lastMessage || `${group.participants?.length || 0} participants`}
+              </p>
+            </div>
           </div>
         </div>
       `;
 
       conversationsList.insertAdjacentHTML('afterbegin', groupHTML);
     });
-
   } catch (error) {
     console.error('Erreur lors du chargement des groupes:', error);
   }

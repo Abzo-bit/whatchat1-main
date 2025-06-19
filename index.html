@@ -53,8 +53,8 @@
                     <path d="M9.53277 12.9911H11.5086V14.9671C11.5086 15.3999 11.7634 15.8175 12.1762 15.9488C12.8608 16.1661 13.4909 15.6613 13.4909 15.009V12.9911H15.4672C15.9005 12.9911 16.3181 12.7358 16.449 12.3226C16.6659 11.6381 16.1606 11.0089 15.5086 11.0089H13.4909V9.03332C13.4909 8.60007 13.2361 8.18252 12.8233 8.05119C12.1391 7.83391 11.5086 8.33872 11.5086 8.991V11.0089H9.49088C8.83941 11.0089 8.33411 11.6381 8.55097 12.3226C8.68144 12.7358 9.09947 12.9911 9.53277 12.9911Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M0.944298 5.52617L2.99998 8.84848V17.3333C2.99998 18.8061 4.19389 20 5.66665 20H19.3333C20.8061 20 22 18.8061 22 17.3333V6.66667C22 5.19391 20.8061 4 19.3333 4H1.79468C1.01126 4 0.532088 4.85997 0.944298 5.52617ZM4.99998 8.27977V17.3333C4.99998 17.7015 5.29845 18 5.66665 18H19.3333C19.7015 18 20 17.7015 20 17.3333V6.66667C20 6.29848 19.7015 6 19.3333 6H3.58937L4.99998 8.27977Z" fill="currentColor"></path></svg></span>
               </button>
               <!-- Icône 3 points -->
-              <button class="text-[#aebac1] hover:text-white transition-colors">
-                <svg viewBox="0 0 24 24" height="24" width="24" fill="currentColor">
+              <button class="text-[#aebac1] hover:text-white transition-colors" id="moreOptionsBtn">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                   <path d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path>
                 </svg>
               </button>
@@ -155,29 +155,11 @@
             <h3 class="text-[#008069] text-sm px-6 py-3">CONTACTS SUR WHATCHAT</h3>
             <div id="contactsList" class="space-y-1">
               <!-- Les contacts seront injectés ici -->
-              <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-[#202c33] cursor-pointer transition-colors" data-id="1">
-                <div class="w-10 h-10 rounded-full overflow-hidden">
-                  <img src="https://placehold.co/40x40" alt="Contact" class="w-full h-full object-cover">
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-white text-sm font-medium">Contact 1</span>
-                  <span class="text-[#8696a0] text-xs">+221 77 123 45 67</span>
-                </div>
-              </div>
             </div>
             
             <!-- Section groupes sera injectée ici via JavaScript -->
             <div id="groupsList" class="mt-4">
               <!-- Les groupes seront injectés ici -->
-              <div class="group-conversation flex items-center gap-3 p-2 rounded-lg hover:bg-[#202c33] cursor-pointer transition-colors" data-group-id="1">
-                <div class="w-10 h-10 rounded-full overflow-hidden">
-                  <img src="https://placehold.co/40x40" alt="Groupe" class="w-full h-full object-cover">
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-white text-sm font-medium">Groupe 1</span>
-                  <span class="text-[#8696a0] text-xs">12 membres</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -188,12 +170,12 @@
         <!-- En-tête du chat -->
         <header class="bg-[#202c33] px-4 py-2 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full overflow-hidden">
-              <img src="https://placehold.co/40x40" alt="Profile" class="w-full h-full object-cover">
+            <div class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center">
+              <span class="text-white text-xl" id="chatHeaderInitials"></span>
             </div>
             <div class="flex flex-col">
-              <h2 class="text-white text-sm font-medium">WhatsApp</h2>
-              <p class="text-[#8696a0] text-xs">+221 77 685 52 59</p>
+              <h2 class="text-white text-lg font-medium" id="chatHeaderName"></h2>
+              <p class="text-sm" id="chatHeaderStatus"></p>
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -202,46 +184,89 @@
                 <path d="M15.9 14.3H15l-0.3-0.3c1-1.1 1.6-2.7 1.6-4.3 0-3.7-3-6.7-6.7-6.7S3 6 3 9.7s3 6.7 6.7 6.7c1.6 0 3.2-0.6 4.3-1.6l0.3 0.3v0.8l5.1 5.1 1.5-1.5-5-5.2zm-6.2 0c-2.6 0-4.6-2.1-4.6-4.6s2.1-4.6 4.6-4.6 4.6 2.1 4.6 4.6-2 4.6-4.6 4.6z"></path>
               </svg>
             </button>
-            <button class="text-[#aebac1] hover:text-white transition-colors">
-              <svg viewBox="0 0 24 24" height="24" width="24" fill="currentColor">
-                <path d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path>
-              </svg>
-            </button>
+            <div class="flex items-center gap-4">
+              <button class="text-[#aebac1] hover:text-white transition-colors" id="moreOptionsBtn">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path>
+                </svg>
+              </button>
+
+              <!-- Menu contextuel -->
+              <div id="moreOptionsMenu" class="hidden absolute right-4 top-16 bg-[#233138] rounded-lg shadow-lg z-50">
+                <div class="py-2">
+                  <button class="w-full px-4 py-2 text-left text-white hover:bg-[#182229] transition-colors">
+                    Infos du contact
+                  </button>
+                  <button class="w-full px-4 py-2 text-left text-white hover:bg-[#182229] transition-colors">
+                    Sélectionner les messages
+                  </button>
+                  <button class="w-full px-4 py-2 text-left text-white hover:bg-[#182229] transition-colors">
+                    Fermer la discussion
+                  </button>
+                  <button class="w-full px-4 py-2 text-left text-[#F15C6D] hover:bg-[#182229] transition-colors">
+                    Bloquer le contact
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </header>
         
         <!-- Zone des messages -->
-        <div class="flex-1 p-4 overflow-y-auto bg-whatsapp-darker">
+        <div class="flex-1 p-4 overflow-y-auto bg-[#0b141a] bg-[url('/chat-bg.png')] bg-repeat">
           <!-- Messages -->
           <div class="space-y-4">
             <!-- Message d'information -->
             <div class="flex justify-center">
-              <div class="bg-whatsapp-gray px-3 py-1 rounded-lg">
-                <p class="text-gray-300 text-xs">Les messages et les appels sont chiffrés de bout en bout. Personne en dehors de cette discussion, pas même WhatsApp, ne peut les lire ou les écouter.</p>
+              <div class="bg-[#202c33] px-3 py-1 rounded-lg">
+                
+                <p class="text-gray-300 text-xs">Les messages sont chiffrés de bout en bout</p>
               </div>
             </div>
             
-            <!-- Les nouveaux messages seront ajoutés ici dynamiquement -->
+            <!-- Les messages seront injectés ici -->
           </div>
         </div>
         
         <!-- Zone de saisie -->
-        <footer class="w-[96%] bg-whatsapp-gray-light p-4 rounded-2xl h-16 mb-6 relative left-7 flex items-center justify-center">
-          <div class="flex w-[100%] items-center">
-            <div class="flex w-20 items-center gap-5">
-              <i class="fas fa-smile text-gray-400 hover:text-white cursor-pointer text-xl"></i>
-              <i class="fas fa-paperclip text-gray-400 hover:text-white cursor-pointer text-xl"></i>
+        <footer class="w-[96%] bg-[#202c33] p-4 rounded-2xl h-16 mb-6 relative left-7">
+          <div class="flex items-center w-full gap-4">
+            <!-- Icônes à gauche -->
+            <div class="flex items-center gap-2">
+              <!-- Icône emoji -->
+              <button class="text-[#8696a0] hover:text-white transition-colors">
+                <svg viewBox="0 0 24 24" height="24" width="24" fill="currentColor">
+                  <path d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-3.505 0-5.388-1.164-5.607-1.959 0 0 5.912 1.055 10.658 0zM11.804 1.011C5.609 1.011.978 6.033.978 12.228s4.826 10.761 11.021 10.761S23.02 18.423 23.02 12.228c.001-6.195-5.021-11.217-11.216-11.217zM12 21.354c-5.273 0-9.381-3.886-9.381-9.159s3.942-9.548 9.215-9.548 9.548 4.275 9.548 9.548c-.001 5.272-4.109 9.159-9.382 9.159zm3.108-9.751c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962z"></path>
+                </svg>
+              </button>
+              
+              <!-- Icône attachement -->
+              <button class="text-[#8696a0] hover:text-white transition-colors">
+                <svg viewBox="0 0 24 24" height="24" width="24" fill="currentColor">
+                  <path d="M1.816 15.556v.002c0 1.502.584 2.912 1.646 3.972s2.472 1.647 3.974 1.647a5.58 5.58 0 0 0 3.972-1.645l9.547-9.548c.769-.768 1.147-1.767 1.058-2.817-.079-.968-.548-1.927-1.319-2.698-1.594-1.592-4.068-1.711-5.517-.262l-7.916 7.915c-.881.881-.792 2.25.214 3.261.959.958 2.423 1.053 3.263.215l5.511-5.512c.28-.28.267-.722.053-.936l-.244-.244c-.191-.191-.567-.349-.957.04l-5.506 5.506c-.18.18-.635.127-.976-.214-.098-.097-.576-.613-.213-.973l7.915-7.917c.818-.817 2.267-.699 3.23.262.5.501.802 1.1.849 1.685.051.573-.156 1.111-.589 1.543l-9.547 9.549a3.97 3.97 0 0 1-2.829 1.171 3.975 3.975 0 0 1-2.83-1.173 3.973 3.973 0 0 1-1.172-2.828c0-1.071.415-2.076 1.172-2.83l7.209-7.211c.157-.157.264-.579.028-.814L11.5 4.36a.572.572 0 0 0-.834.018l-7.205 7.207a5.577 5.577 0 0 0-1.645 3.971z"></path>
+                </svg>
+              </button>
             </div>
-            
-            <div class="flex w-full gap-3 relative">
+
+            <!-- Input message -->
+            <div class="flex-1">
               <input type="text" 
                      id="messageInput"
-                     placeholder="Entrez un message"
-                     class="w-[95%] bg-[#fff0] text-white px-4 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-whatsapp-green"
-              >
-              <button class="w-12 hover:bg-whatsapp-green-dark p-3 rounded-full transition-colors" id="sendButton">
-                <i class="fas fa-microphone text-[#ffffffc7] text-2xl" id="microIcon"></i>
-                <i class="fas fa-paper-plane text-[#ffffffc7] text-xl hidden" id="sendIcon"></i>
+                     placeholder="Tapez un message" 
+                     class="w-full bg-transparent text-white placeholder-[#8696a0] focus:outline-none">
+            </div>
+
+            <!-- Boutons d'envoi/micro -->
+            <div class="flex items-center">
+              <button id="micButton" class="text-[#8696a0] hover:text-white transition-colors">
+                <svg viewBox="0 0 24 24" height="24" width="24" fill="currentColor">
+                  <path d="M11.999 14.942c2.001 0 3.531-1.53 3.531-3.531V4.35c0-2.001-1.53-3.531-3.531-3.531S8.469 2.35 8.469 4.35v7.061c0 2.001 1.53 3.531 3.53 3.531zm6.238-3.53c0 3.531-2.942 6.002-6.237 6.002s-6.237-2.471-6.237-6.002H3.761c0 4.001 3.178 7.297 7.061 7.885v3.884h2.354v-3.884c3.884-.588 7.061-3.884 7.061-7.885h-2z"></path>
+                </svg>
+              </button>
+              <button id="sendButton" class="text-[#8696a0] hover:text-white transition-colors hidden">
+                <svg viewBox="0 0 24 24" height="24" width="24" fill="currentColor">
+                  <path d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"></path>
+                </svg>
               </button>
             </div>
           </div>

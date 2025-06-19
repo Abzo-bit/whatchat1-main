@@ -1,3 +1,9 @@
+/**
+ * Affiche un message d'erreur ou de succès
+ * @param {string} message - Le message à afficher
+ * @param {string} type - Le type de message ('error' ou 'success')
+ * @param {number} duration - Durée d'affichage en ms
+ */
 export function showError(message, type = 'error', duration = 3000) {
   const errorDiv = document.createElement('div');
   const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';

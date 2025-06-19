@@ -1,37 +1,47 @@
-export async function displayContacts() {
+import { API_URL } from '../../config.js';
+
+export async function loadContacts() {
+  console.log('Chargement des contacts...');
   try {
-    const response = await fetch('https://json-server-xp3c.onrender.com/contacts');
+    const response = await fetch(`${API_URL}/contacts`);
+    console.log('Réponse de l\'API:', response);
     const contacts = await response.json();
+    console.log('Contacts reçus:', contacts);
     
-    if (!Array.isArray(contacts)) {
-      console.error('Les contacts ne sont pas dans un format valide');
-      return;
-    }
+    const contactsList = document.querySelector('#contactsList');
+    if (!contactsList) return;
 
-    const contactList = document.getElementById('contactsList');
-    if (!contactList) {
-      console.error('Element contact-list non trouvé');
-      return;
-    }
+    const contactsHTML = contacts.map(contact => {
+      const initials = contact.name
+        .split(' ')
+        .map(word => word[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
 
-    contactList.innerHTML = '';
+      // Générer le statut du contact
+      const statusText = contact.isOnline 
+        ? '<span class="text-[#00a884]">en ligne</span>'
+        : contact.lastSeen 
+          ? `<span class="text-[#8696a0]">vu la dernière fois le ${new Date(contact.lastSeen).toLocaleString()}</span>`
+          : `<span class="text-[#8696a0]">${contact.status || "Salut ! J'utilise WhatsChat."}</span>`;
 
-    contacts.forEach(contact => {
-      const contactElement = document.createElement('div');
-      contactElement.className = 'contact-item p-4 hover:bg-gray-100 cursor-pointer';
-      contactElement.innerHTML = `
-        <div class="flex items-center">
-          <div class="w-12 h-12 rounded-full bg-gray-300 mr-4">
-            ${contact.avatar ? `<img src="${contact.avatar}" alt="${contact.name}" class="w-full h-full rounded-full">` : ''}
+      return `
+        <div class="flex items-center px-6 py-3 hover:bg-[#202c33] cursor-pointer contact-item" 
+             data-id="${contact.id}" 
+             data-type="contact">
+          <div class="w-12 h-12 rounded-full bg-[#00a884] flex items-center justify-center mr-4">
+            <span class="text-white text-sm font-medium">${initials}</span>
           </div>
-          <div>
-            <h3 class="font-semibold">${contact.name}</h3>
-            <p class="text-sm text-gray-600">${contact.status || 'Hey, j\'utilise WhatsChat!'}</p>
+          <div class="flex-1">
+            <h4 class="text-white">${contact.name}</h4>
+            <p class="text-[13px]">${statusText}</p>
           </div>
         </div>
       `;
-      contactList.appendChild(contactElement);
-    });
+    }).join('');
+
+    contactsList.innerHTML = contactsHTML;
   } catch (error) {
     console.error('Erreur lors du chargement des contacts:', error);
   }

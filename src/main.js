@@ -3,15 +3,17 @@ import {
     createContact,
     initializeContactModal 
 } from './modules/contacts/index.js';
+import { API_URL } from './config.js';
 import { initializeFilters } from './filters.js';
 import { initializeSearch } from './search.js';
 import { preloadImages } from './utils/assets.js';
 import { handleNewContact } from './modules/contacts/contactForm.js';
-import { displayContacts } from './modules/contacts/contactList.js';
 import { handleNewGroup } from './modules/groups/groupForm.js';
 import { displayGroups } from './modules/groups/groupList.js';
-import { initializeChatSelection } from './modules/chat/chatHandler.js';
-import { initializeMessageInput } from './modules/chat/messageHandler.js';
+import { initializeChatSelection, loadRecentConversations } from './modules/chat/chatHandler.js';
+import { initializeMessageInput, handleSendMessage } from './modules/chat/messageHandler.js';
+import { updateAllContactsWithNewFields, simulateStatusChanges } from './modules/contacts/services/contactService.js';
+import { loadContacts } from './modules/contacts/contactList.js';
 
 function checkAuth() {
     const authToken = localStorage.getItem('auth_token');
@@ -34,7 +36,7 @@ function initializeLogout() {
     const logoutBtn = document.querySelector('#logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
+            e.preventDefault(); // Changé de stopPropagation à preventDefault
             localStorage.removeItem('auth_token');
             window.location.href = '/login.html';
         });
@@ -52,12 +54,12 @@ function initializeNewChatMenu() {
   }
 
   newChatButton.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.preventDefault(); // Utiliser preventDefault au lieu de stopPropagation
     newChatMenu.classList.toggle('hidden');
   });
 
   document.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.preventDefault(); 
     if (!newChatMenu.contains(e.target) && !newChatButton.contains(e.target)) {
       newChatMenu.classList.add('hidden');
     }
@@ -67,7 +69,7 @@ function initializeNewChatMenu() {
 function initializeNewChatPanel() {
   const conversationsPanel = document.querySelector('#conversationsPanel');
   const newChatPanel = document.querySelector('#newChatPanel');
-  const newChatButton = document.querySelector('[data-icon="new-chat-outline"]').parentElement;
+  const newChatButton = document.querySelector('[data-icon="new-chat-outline"]')?.parentElement;
   const backButton = document.querySelector('#backToConversations');
 
   if (!conversationsPanel || !newChatPanel || !newChatButton || !backButton) {
@@ -77,147 +79,121 @@ function initializeNewChatPanel() {
 
   // Afficher le panel de nouvelle discussion
   newChatButton.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.preventDefault();
     conversationsPanel.style.display = 'none';
     newChatPanel.style.display = 'flex';
-    loadContacts(); // Cette ligne appelle la fonction loadContacts
+    loadContacts(); // Utilisation de la fonction importée
   });
 
   // Retour au panel des conversations
   backButton.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.preventDefault(); // Utiliser preventDefault au lieu de stopPropagation
     newChatPanel.style.display = 'none';
     conversationsPanel.style.display = 'flex';
   });
 }
 
-async function initializeApp() {
-  try {
-    if (!checkAuth()) return;
+export async function initializeApp() {
+    try {
+        if (!checkAuth()) return;
+        
+        if (window.appInitialized) {
+            console.log('Application déjà initialisée');
+            return;
+        }
+        
+        // Mettre à jour les contacts avec les nouveaux champs
+        console.log('Mise à jour des contacts...');
+        // await updateAllContactsWithNewFields();
+        console.log('Mise à jour des contacts terminée');
+        
+        // Initialiser la simulation des statuts (optionnel, pour la démo)
+        await simulateStatusChanges();
+        
+        // Initialiser les composants
+        handleNewContact();
+        handleNewGroup();
+        initializeNewChatPanel();
+        initializeSearch();
+        initializeFilters();
+        initializeChatSelection();
+        initializeMessageInput();
+        
+        // Charger les conversations une seule fois
+        // await loadRecentConversations();
 
-    // Charger les informations du propriétaire
-    const ownerResponse = await fetch('https://json-server-xp3c.onrender.com/owner');
-    const owner = await ownerResponse.json();
-
-    // Mettre à jour l'avatar dans la sidebar
-    const profileAvatar = document.querySelector('.sidebar-profile');
-    if (profileAvatar) {
-      profileAvatar.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-[#00a884] flex items-center justify-center cursor-pointer">
-          ${owner.avatar ? 
-            `<img src="${owner.avatar}" alt="Mon profil" class="w-full h-full rounded-full">` :
-            `<span class="text-white text-sm">${owner.name[0].toUpperCase()}</span>`
-          }
-        </div>
-      `;
+        // Ajoutez également l'initialisation des statuts
+        initializeStatusUpdates();
+        
+        window.appInitialized = true;
+        console.log('Application initialisée avec succès');
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation:', error);
     }
-
-    // Initialiser les composants
-    handleNewContact();
-    handleNewGroup();
-    
-    await displayGroups();
-    await displayContacts();
-
-    // Initialiser les autres fonctionnalités
-    initializeNewChatPanel();
-    initializeSearch();
-    initializeFilters();
-    initializeChatSelection();
-    initializeMessageInput();
-
-  } catch (error) {
-    console.error('Erreur lors de l\'initialisation:', error);
-  }
 }
 
-// Fonction pour charger et afficher les contacts
-async function loadContacts() {
-  try {
-    const [contactsResponse, ownerResponse] = await Promise.all([
-      fetch('https://json-server-xp3c.onrender.com/contacts'),
-      fetch('https://json-server-xp3c.onrender.com/owner')
-    ]);
-
-    const contacts = await contactsResponse.json();
-    const owner = await ownerResponse.json();
-    
-    const contactsList = document.querySelector('#contactsList');
-    if (!contactsList) return;
-
-    // Créer le HTML pour le propriétaire
-    const ownerHTML = `
-      <div class="flex items-center px-6 py-3 hover:bg-[#202c33] cursor-pointer border-t border-[#222d34]">
-        <div class="w-12 h-12 rounded-full bg-[#00a884] flex items-center justify-center mr-4">
-          ${owner.avatar ? 
-            `<img src="${owner.avatar}" alt="Mon profil" class="w-full h-full rounded-full">` :
-            `<span class="text-white text-xl">${owner.name[0].toUpperCase()}</span>`
-          }
-        </div>
-        <div>
-          <h4 class="text-white">Message personnel</h4>
-          <p class="text-[#8696a0] text-sm">${owner.status || "Disponible"}</p>
-        </div>
-      </div>
-    `;
-
-    // Générer le HTML pour les contacts
-    const contactsHTML = contacts.map(contact => `
-      <div class="flex items-center px-6 py-3 hover:bg-[#202c33] cursor-pointer">
-        <div class="w-12 h-12 rounded-full bg-[#00a884] flex items-center justify-center mr-4">
-          ${contact.avatar ? 
-            `<img src="${contact.avatar}" alt="${contact.name}" class="w-full h-full rounded-full">` :
-            `<span class="text-white text-xl">${contact.name[0].toUpperCase()}</span>`
-          }
-        </div>
-        <div>
-          <h4 class="text-white">${contact.name}</h4>
-          <p class="text-[#8696a0] text-sm">${contact.status || "Salut ! J'utilise WhatsChat."}</p>
-        </div>
-      </div>
-    `).join('');
-
-    // Structure finale
-    contactsList.innerHTML = `
-      ${ownerHTML}
-      <!-- Autres contacts -->
-      <div class="mt-4">
-        <h3 class="text-[#008069] text-sm px-6 py-3">#</h3>
-        ${contactsHTML}
-      </div>
-    `;
-
-  } catch (error) {
-    console.error('Erreur lors du chargement des contacts:', error);
-  }
-}
-
-// Ajouter dans votre main.js
+// Utiliser createContactModal() et initializeContactModalHandlers() directement sans redéfinir showContactModal
 function initializeContactFunctions() {
   const newContactButton = document.querySelector('#newContactButton');
-  
+    
   if (!newContactButton) {
     console.error('Bouton nouveau contact non trouvé');
     return;
   }
 
   newContactButton.addEventListener('click', (e) => {
-    e.stopPropagation();
+    e.preventDefault();
     console.log('Clic sur nouveau contact');
-    showContactModal();
+    const modal = createContactModal();
+    document.body.appendChild(modal);
+    initializeContactModalHandlers(modal);
   });
 }
 
-// Assurez-vous que la fonction est appelée au chargement de la page
-document.addEventListener('DOMContentLoaded', (e) => {
-    e.stopPropagation();
-  initializeContactFunctions();
+// Ne garder que celle-ci
+document.addEventListener('DOMContentLoaded', async () => {
+  if (window.appInitialized) return;
+  
+  try {
+    if (!checkAuth()) return;
+    
+    // Gérer les ressources statiques
+    handleStaticResources();
+    
+    // Charger les conversations sauvegardées
+    await loadRecentConversations();
+    
+    // Initialiser le reste de l'application 
+    initializeApp();
+    
+    window.appInitialized = true;
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation:', error);
+  }
 });
 
-function showContactModal() {
-  const modal = createContactModal();
-  document.body.appendChild(modal);
-  initializeContactModalHandlers(modal);
+// Ajoutez cette fonction pour gérer les ressources statiques
+function handleStaticResources() {
+  // Gérer les erreurs d'images
+  const images = document.querySelectorAll('img');
+  images.forEach(img => {
+    img.onerror = () => {
+      img.src = '/default-avatar.png'; // Image par défaut
+    };
+  });
+  
+  // Gérer les erreurs de fonts
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+  link.onerror = () => {
+    // Charger une version locale en fallback
+    const localLink = document.createElement('link');
+    localLink.rel = 'stylesheet';
+    localLink.href = '/assets/fonts/fontawesome.min.css';
+    document.head.appendChild(localLink);
+  };
+  document.head.appendChild(link);
 }
 
 function createContactModal() {
@@ -278,47 +254,74 @@ function createContactModal() {
 }
 
 function initializeContactModalHandlers(modal) {
-  const closeButton = modal.querySelector('#closeContactModal');
-  const form = modal.querySelector('#newContactForm');
+    const closeButton = modal.querySelector('#closeContactModal');
+    const form = modal.querySelector('#newContactForm');
 
-  closeButton.addEventListener('click', () => {
-    modal.remove();
-  });
+    closeButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        modal.remove();
+    });
 
-  form.addEventListener('submit', async (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    
-    const formData = new FormData(form);
-    const contactData = {
-      name: formData.get('name'),
-      phone: formData.get('phone'),
-      avatar: formData.get('name').charAt(0).toUpperCase(),
-      status: "Salut ! J'utilise WhatsChat."
-    };
+    form.addEventListener('submit', async (e) => {
+      e.stopPropagation(); // Empêcher le comportement par défaut
+        e.preventDefault(); // Utiliser seulement preventDefault ici
+        
+        const formData = new FormData(form);
+        const contactData = {
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            avatar: formData.get('name').charAt(0).toUpperCase(),
+            status: "Salut ! J'utilise WhatsChat."
+        };
 
-    try {
-      const response = await fetch('https://json-server-xp3c.onrender.com/contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(contactData)
-      });
+        try {
+            const response = await fetch('https://json-server-xp3c.onrender.com/contacts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(contactData)
+            });
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la création du contact');
-      }
+            if (!response.ok) {
+                throw new Error('Erreur lors de la création du contact');
+            }
 
-      // Recharger les contacts et fermer le modal
-      modal.remove();
-      loadContacts();
-    } catch (error) {
-      console.error('Erreur:', error);
-      alert('Erreur lors de la création du contact');
-    }
-  });
+            modal.remove();
+            await loadContacts(); // Ajout de await ici
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la création du contact');
+        }
+    });
 }
 
-// S'assurer que l'app est initialisée au chargement
-document.addEventListener('DOMContentLoaded', initializeApp);
+// Ajouter cette fonction
+function initializeStatusUpdates() {
+  // Mettre à jour les statuts toutes les 60 secondes
+  setInterval(async () => {
+    try {
+      const response = await fetch(`${API_URL}/contacts`);
+      const contacts = await response.json();
+      
+      // Mettre à jour les statuts dans l'interface
+      contacts.forEach(contact => {
+        const contactElement = document.querySelector(`[data-id="${contact.id}"]`);
+        if (contactElement) {
+          const statusElement = contactElement.querySelector('.text-xs span');
+          if (statusElement) {
+            if (contact.isOnline) {
+              statusElement.className = 'text-[#00a884]';
+              statusElement.textContent = 'en ligne';
+            } else {
+              statusElement.className = 'text-[#8696a0]';
+              statusElement.textContent = formatLastSeen(contact.lastSeen);
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des statuts:', error);
+    }
+  }, 60000); // 60 secondes
+}
